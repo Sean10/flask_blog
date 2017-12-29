@@ -15,6 +15,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from werkzeug import secure_filename
 from flask_uploads import UploadSet, configure_uploads,\
  patch_request_class,IMAGES
+#from flask_wtf import
 
 # create our little application :)
 app = Flask(__name__)
@@ -28,9 +29,12 @@ app.config.update(dict(
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['UPLOADED_PHOTOS_DEST'] = "./data"
+
 files = UploadSet('photos',IMAGES)
 configure_uploads(app, files)
 patch_request_class(app)  # 文件大小限制，默认为16MB
+
+app.config['SECRET_KEY'] = 'a random string'
 
 def connect_db():
     """Connects to the specific database."""
@@ -122,9 +126,14 @@ def upload_file():
         return redirect(url_for("show",name=filename))
     return render_template("upload.html")
 
-@app.route('/show/<name>')
-def show(name):
-    if name is None:
+@app.route('/show/<filename>')
+def show(filename):
+    if filename is None:
         abort(404)
-    file_url = files.url(name)
-    return render_template('show.html',file_url=file_url,name=name)
+    file_url = files.url(filename)
+    return render_template('show.html',file_url=file_url,filename=filename)
+
+@app.route('/download/<filename>', methods=['GET'])
+def download(filename):
+    directory = './data'
+    return send_from_directory(directory, filename, as_attachment=True)

@@ -7,4 +7,5 @@
   {% else %}
   <li>Em……No file_url</li>
   {% endif %}
+<input id="fat-btn" class="btn btn-default" type="button" value='Download' onclick="location.href='{{ url_for('download', filename= filename) }}'">
 {% endblock %}
