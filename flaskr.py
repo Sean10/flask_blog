@@ -13,11 +13,11 @@ from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, send_from_directory
 from werkzeug import secure_filename
-
+from flask_uploads import UploadSet, configure_uploads,\
+ patch_request_class,IMAGES
 
 # create our little application :)
 app = Flask(__name__)
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # Load default config and override config from an environment variable
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'flaskr.db'),
@@ -27,12 +27,10 @@ app.config.update(dict(
     PASSWORD='default'
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
-app.config['UPLOAD_FOLDER'] = "./data"
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+app.config['UPLOADED_PHOTOS_DEST'] = "./data"
+files = UploadSet('photos',IMAGES)
+configure_uploads(app, files)
+patch_request_class(app)  # 文件大小限制，默认为16MB
 
 def connect_db():
     """Connects to the specific database."""
@@ -113,17 +111,20 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
-@app.route('/upload/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            file_url = url_for('uploaded_file', filename=filename)
-            return render_template('upload.html',file_url=file_url)
-    return render_template('upload.html')
+    if request.method == 'POST' and 'photo' in request.files:
+        filename = files.save(request.files['photo'])
+        file_url = files.url(filename)
+        # rec = Photo(filename=filename, user=g.user.id)
+        # rec.store()
+        flash("Photo saved.")
+        return redirect(url_for("show",name=filename))
+    return render_template("upload.html")
+
+@app.route('/show/<name>')
+def show(name):
+    if name is None:
+        abort(404)
+    file_url = files.url(name)
+    return render_template('show.html',file_url=file_url,name=name)
