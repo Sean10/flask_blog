@@ -126,6 +126,11 @@ def upload_file():
         return redirect(url_for("show",name=filename))
     return render_template("upload.html")
 
+@app.route('/show')
+def show_all():
+    photos_list = os.listdir(app.config['UPLOADED_PHOTOS_DEST'])
+    return render_template('show_all.html', photos_list=photos_list)
+
 @app.route('/show/<filename>')
 def show(filename):
     if filename is None:
