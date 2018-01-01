@@ -15,10 +15,12 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from werkzeug import secure_filename
 from flask_uploads import UploadSet, configure_uploads,\
  patch_request_class,IMAGES
+from flask_bootstrap import Bootstrap
 #from flask_wtf import
 
 # create our little application :)
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 # Load default config and override config from an environment variable
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'flaskr.db'),
@@ -35,6 +37,21 @@ configure_uploads(app, files)
 patch_request_class(app)  # 文件大小限制，默认为16MB
 
 app.config['SECRET_KEY'] = 'a random string'
+
+
+from flask_nav import Nav
+from flask_nav.elements import Navbar, View
+
+nav = Nav()
+
+@nav.navigation()
+def mynavbar():
+    return Navbar(
+        'mysite',
+        View('Home', 'login'),
+    )
+
+nav.init_app(app)
 
 def connect_db():
     """Connects to the specific database."""

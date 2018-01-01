@@ -1,5 +1,25 @@
-<!doctype html>
-<title>Flaskr</title>
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Flaskr{% endblock %}
+
+{% block styles %}
+
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='mystyle.css')}}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('.static', filename='myscripts.js')}}"></script>
+{{super()}}
+{% endblock %}
+
+{% block navbar %}
+{{nav.mynavbar.render()}}
+{% endblock %}
+
+{% block content %}
+
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 <div class="page">
   <h1>Flaskr</h1>
@@ -13,5 +33,6 @@
   {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
   {% endfor %}
-  {% block body %}{% endblock %}
+  {% block page_content %}{% endblock %}
 </div>
+{% endblock %}
