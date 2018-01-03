@@ -11,7 +11,7 @@
 import os
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash, send_from_directory
+     render_template, flash, send_from_directory, jsonify
 from werkzeug import secure_filename
 from flask_uploads import UploadSet, configure_uploads,\
  patch_request_class,IMAGES
@@ -38,20 +38,6 @@ patch_request_class(app)  # 文件大小限制，默认为16MB
 
 app.config['SECRET_KEY'] = 'a random string'
 
-
-from flask_nav import Nav
-from flask_nav.elements import Navbar, View
-
-nav = Nav()
-
-@nav.navigation()
-def mynavbar():
-    return Navbar(
-        'mysite',
-        View('Home', 'login'),
-    )
-
-nav.init_app(app)
 
 def connect_db():
     """Connects to the specific database."""
@@ -132,7 +118,7 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/upload', methods=['POST'])
 def upload_file():
     if request.method == 'POST' and 'photo' in request.files:
         filename = files.save(request.files['photo'])
@@ -159,3 +145,8 @@ def show(filename):
 def download(filename):
     directory = './data'
     return send_from_directory(directory, filename, as_attachment=True)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
