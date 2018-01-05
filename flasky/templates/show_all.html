@@ -16,7 +16,7 @@
   {% for photo in photos_list %}
 <tr>
 	<td name="{{photo}}">{{photo}} </td>
-	<td><input id="fat-btn" class="btn btn-default" type="button" value='Download' onclick="location.href='{{ url_for('download', filename=photo) }}'"></td>
+	<td><input id="fat-btn" class="btn btn-default" type="button" value='Download' onclick="location.href='{{ url_for('flasky.download', filename=photo) }}'"></td>
 	<br/>
 </tr>
 
