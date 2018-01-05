@@ -6,9 +6,12 @@ from sqlite3 import dbapi2 as sqlite3
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, send_from_directory, Blueprint, current_app
-from werkzeug import secure_filename
+#from werkzeug import secure_filename
 from flask_restful import Resource, reqparse
-#from flask_wtf import
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms import SubmitField
+
 from flasky import files
 
 main = Blueprint('flasky', __name__)
@@ -31,7 +34,7 @@ def connect_db():
     """Connects to the specific database."""
     print(current_app.config['DATABASE'])
     print(type(current_app.config['DATABASE']))
-    rv = sqlite3.connect(current_app.config['DATABASE'][0])
+    rv = sqlite3.connect(current_app.config['DATABASE'])
     rv.row_factory = sqlite3.Row
     return rv
 
@@ -62,18 +65,18 @@ def show_entries():
     return render_template('show_entries.html', entries=entries)
 
 
-# @main.route('/add', methods=['POST'])
-# def add_entry():
-#     if not session.get('logged_in'):
-#         abort(401)
-#     db = get_db()
-#     db.execute('insert into entries (title, text) values (?, ?)',
-#                [request.form['title'], request.form['text']])
-#     db.commit()
-#     flash('New entry was successfully posted')
-#     return redirect(url_for('show_entries'))
-#
-#
+@main.route('/add', methods=['POST'])
+def add_entry():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    db.execute('insert into entries (title, text) values (?, ?)',
+               [request.form['title'], request.form['text']])
+    db.commit()
+    flash('New entry was successfully posted')
+    return redirect(url_for('show_entries'))
+
+
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -95,20 +98,38 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 #
-@main.route('/upload', methods=['POST'])
+
+class UploadForm(FlaskForm):
+    photo = FileField(validators=[
+        FileAllowed(files, u'只能上传图片！'),
+        FileRequired(u'文件未选择！')])
+    #print("ERROR\n")
+    submit = SubmitField(u'上传')
+
+
+@main.route('/upload', methods=['GET','POST'])
 def upload_file():
-    if request.method == 'POST' and 'photo' in request.files:
-        filename = files.save(request.files['photo'])
+    # if request.method == 'POST' and 'photo' in request.files:
+    #     filename = files.save(request.files['photo'])
+    #     file_url = files.url(filename)
+    #     # rec = Photo(filename=filename, user=g.user.id)
+    #     # rec.store()
+    #     flash("Photo saved.")
+    #     return redirect(url_for("show",name=filename))
+    # return render_template("upload.html")
+    form = UploadForm()
+    #print("heelo\n")
+    if form.validate_on_submit():
+        filename = files.save(form.photo.data)
         file_url = files.url(filename)
-        # rec = Photo(filename=filename, user=g.user.id)
-        # rec.store()
-        flash("Photo saved.")
-        return redirect(url_for("show",name=filename))
-    return render_template("upload.html")
+    else:
+        file_url = None
+        filename = None
+    return render_template('upload.html', form=form,file_url=file_url,name=filename)
 
 @main.route('/show')
 def show_all():
-    photos_list = os.listdir(current_app.config['UPLOADED_PHOTOS_DEST'][0])
+    photos_list = os.listdir(current_app.config['UPLOADED_PHOTOS_DEST'])
     return render_template('show_all.html', photos_list=photos_list)
 
 @main.route('/show/<filename>')

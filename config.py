@@ -7,9 +7,9 @@ import os
 class config():
 
     # Load default config and override config from an environment variable
-    DATABASE = os.path.join(os.getcwd(), 'flaskr.db'),
-    DEBUG = True,
-    SECRET_KEY = 'development key',
-    USERNAME = 'admin',
+    DATABASE = os.path.join(os.getcwd(), 'flaskr.db')
+    DEBUG = True
+    SECRET_KEY = 'development key'
+    USERNAME = 'admin'
     PASSWORD = 'default'
-    UPLOADED_PHOTOS_DEST = "./data",
+    UPLOADED_PHOTOS_DEST = "./data"
