@@ -12,4 +12,4 @@ class config():
     SECRET_KEY = 'development key'
     USERNAME = 'admin'
     PASSWORD = 'default'
-    UPLOADED_PHOTOS_DEST = "./data"
+    UPLOADED_FILES_DEST = "./data"

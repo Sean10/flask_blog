@@ -1,7 +1,7 @@
 from flask import Flask, g
 from werkzeug.utils import find_modules, import_string
 from flask_uploads import UploadSet, configure_uploads,\
- patch_request_class,IMAGES
+ patch_request_class,IMAGES, TEXT, DOCUMENTS, DATA, AUDIO
 from config import config
 from flask_restful import Api
 from flask_bootstrap import Bootstrap
@@ -10,7 +10,8 @@ import os
 
 api = Api()
 bootstrap = Bootstrap()
-files = UploadSet('photos',IMAGES)
+DEFAULT = TEXT + DOCUMENTS + IMAGES + DATA + AUDIO
+files = UploadSet('files',DEFAULT)
 
 def create_app(config=None):
     app = Flask(__name__)

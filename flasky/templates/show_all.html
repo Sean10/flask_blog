@@ -3,18 +3,6 @@
 <title>Photo Mangaers</title>
     <h1>图片管理</h1>
 
-
-    <form method=post enctype=multipart/form-data>
-       <input type=file name=photo>
-       <input type=submit value=上传>
-    </form>
-    {% if file_url %}
-    <br><img src="{{ file_url }}" /></br>
-    <!-- {% else %}
-    <li>Em……No file_url</li> -->
-    {% endif %}
-
-
   {% for photo in photos_list %}
 <tr>
 	<td name="{{photo}}">{{photo}} </td>

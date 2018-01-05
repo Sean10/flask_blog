@@ -11,6 +11,8 @@ from flask_restful import Resource, reqparse
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField
+import time
+import hashlib
 
 from flasky import files
 
@@ -81,14 +83,14 @@ def add_entry():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != main.config['USERNAME']:
+        if request.form['username'] != current_app.config['USERNAME']:
             error = 'Invalid username'
-        elif request.form['password'] != main.config['PASSWORD']:
+        elif request.form['password'] != current_app.config['PASSWORD']:
             error = 'Invalid password'
         else:
             session['logged_in'] = True
             flash('You were logged in')
-            return redirect(url_for('show_entries'))
+            return redirect(url_for('flasky.show_entries'))
     return render_template('login.html', error=error)
 
 
@@ -100,8 +102,8 @@ def logout():
 #
 
 class UploadForm(FlaskForm):
-    photo = FileField(validators=[
-        FileAllowed(files, u'只能上传图片！'),
+    file = FileField(validators=[
+        FileAllowed(files, u'只能上传文件！'),
         FileRequired(u'文件未选择！')])
     #print("ERROR\n")
     submit = SubmitField(u'上传')
@@ -118,18 +120,19 @@ def upload_file():
     #     return redirect(url_for("show",name=filename))
     # return render_template("upload.html")
     form = UploadForm()
-    #print("heelo\n")
     if form.validate_on_submit():
-        filename = files.save(form.photo.data)
-        file_url = files.url(filename)
+        for filedata in request.files.getlist('file'):
+            name = hashlib.md5(('admin' + str(time.time())).encode('UTF-8')).hexdigest()[:15]
+            filename = files.save(filedata, name=name+'.')
+            #file_url = files.url(filename)
     else:
-        file_url = None
+        #file_url = None
         filename = None
-    return render_template('upload.html', form=form,file_url=file_url,name=filename)
+    return render_template('upload.html', form=form,name=filename)
 
 @main.route('/show')
 def show_all():
-    photos_list = os.listdir(current_app.config['UPLOADED_PHOTOS_DEST'])
+    photos_list = os.listdir(current_app.config['UPLOADED_FILES_DEST'])
     return render_template('show_all.html', photos_list=photos_list)
 
 @main.route('/show/<filename>')
