@@ -6,7 +6,7 @@
 {{super()}}
 <link rel="stylesheet"
       href="{{url_for('static', filename='mystyle.css')}}">
-{% endblock %}
+{% endblock %}-->
 
 
 {% block navbar %}
@@ -32,14 +32,21 @@
                      <!-- </div> -->
                      {% endif %}</li>
                 <li><a href="{{ url_for('flasky.show_all') }}">show</a></li>
+                <li><a href="{{ url_for('flasky.upload_file') }}">upload</a></li>
+                <li><a href="{{ url_for('flasky.about') }}">about</a></li>
+                {% block course %}
+                    <li>
+                    <a href="{{ url_for('flasky.course') }}">多媒体</a>
+                </li>
+                {% endblock %}
             </ul>
+
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block content %}
-
  <div class='container'>
      {% for message in get_flashed_messages() %}
        <div class="flash">{{ message }}</div>

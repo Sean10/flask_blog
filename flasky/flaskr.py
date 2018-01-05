@@ -98,7 +98,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
-    return redirect(url_for('show_entries'))
+    return redirect(url_for('flasky.show_entries'))
 #
 
 class UploadForm(FlaskForm):
@@ -124,6 +124,7 @@ def upload_file():
         for filedata in request.files.getlist('file'):
             name = hashlib.md5(('admin' + str(time.time())).encode('UTF-8')).hexdigest()[:15]
             filename = files.save(filedata, name=name+'.')
+            flash("Succeed to upload")
             #file_url = files.url(filename)
     else:
         #file_url = None
@@ -144,8 +145,19 @@ def show(filename):
 
 @main.route('/download/<filename>', methods=['GET'])
 def download(filename):
-    directory = './data'
+    directory = os.path.join(os.getcwd(),current_app.config['UPLOADED_FILES_DEST'])
+    # print(directory)
+    # print(filename)
     return send_from_directory(directory, filename, as_attachment=True)
+
+@main.route('/about', methods=['GET'])
+def about():
+    return render_template("about.html")
+
+@main.route('/course', methods=['GET'])
+def course():
+
+    return render_template("course.html")
 
 
 @main.errorhandler(404)
