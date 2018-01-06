@@ -186,13 +186,16 @@ def oauth():
     if request.args.get('user'):
         if users.get(request.args.get('user'))[0] == request.args.get('pw') and oauth_redirect_uri:
             uri = oauth_redirect_uri[0] + '?code=%s' % gen_auth_code(oauth_redirect_uri[0])
+            print(uri)
             return redirect(uri)
     if request.args.get('code'):
         if auth_code.get(int(request.args.get('code'))) == request.args.get('redirect_uri'):
+            print("succeed")
             return gen_token(request.args.get("client_id"))
     if request.args.get('redirect_uri'):
+        print(request.args)
         oauth_redirect_uri.append(request.args.get('redirect_uri'))
-    #print(oauth_redirect_uri)
+    print(oauth_redirect_uri)
     return 'please login'
 
 
