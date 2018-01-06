@@ -16,6 +16,11 @@ users = {
     "admin": ["default"]
 }
 
+auth_code = {
+
+}
+
+oauth_redirect_uri = []
 def create_app(config=None):
     app = Flask(__name__)
 

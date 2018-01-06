@@ -15,8 +15,8 @@ import time
 import hashlib
 import base64
 
-from flasky import files, users
-from flasky.utils import  gen_token, verify_token
+from flasky import files, users, auth_code, oauth_redirect_uri
+from flasky.utils import  gen_token, verify_token, gen_auth_code
 
 flasky = Blueprint('flasky', __name__)
 
@@ -119,6 +119,7 @@ def login():
 @flasky.route('/test', methods=['POST', 'GET'])
 def test():
     token = request.args.get('token')
+    print(token)
     if verify_token(token):
         return 'data'
     else:
@@ -179,6 +180,20 @@ def about():
 @flasky.route('/course', methods=['GET'])
 def course():
     return render_template("course.html")
+
+@flasky.route('/oauth', methods=['GET', 'POST'])
+def oauth():
+    if request.args.get('user'):
+        if users.get(request.args.get('user'))[0] == request.args.get('pw') and oauth_redirect_uri:
+            uri = oauth_redirect_uri[0] + '?code=%s' % gen_auth_code(oauth_redirect_uri[0])
+            return redirect(uri)
+    if request.args.get('code'):
+        if auth_code.get(int(request.args.get('code'))) == request.args.get('redirect_uri'):
+            return gen_token(request.args.get("client_id"))
+    if request.args.get('redirect_uri'):
+        oauth_redirect_uri.append(request.args.get('redirect_uri'))
+    #print(oauth_redirect_uri)
+    return 'please login'
 
 
 @flasky.errorhandler(404)

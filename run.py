@@ -7,9 +7,10 @@ app = create_app(config)
 
 from flasky.flaskr import flasky, init_db
 from flasky.todo import todo
+from flasky.client import client
 app.register_blueprint(flasky)
 app.register_blueprint(todo, url_prefix='/todo')
-
+app.register_blueprint(client, url_prefix='/client')
 
 
 
