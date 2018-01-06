@@ -10,6 +10,5 @@ class config():
     DATABASE = os.path.join(os.getcwd(), 'flaskr.db')
     DEBUG = True
     SECRET_KEY = 'development key'
-    USERNAME = 'admin'
-    PASSWORD = 'default'
     UPLOADED_FILES_DEST = "./data"
+

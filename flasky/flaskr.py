@@ -5,7 +5,7 @@ import os
 from sqlite3 import dbapi2 as sqlite3
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash, send_from_directory, Blueprint, current_app
+     render_template, flash, send_from_directory, Blueprint, current_app, jsonify
 #from werkzeug import secure_filename
 from flask_restful import Resource, reqparse
 from flask_wtf import FlaskForm
@@ -13,10 +13,15 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField
 import time
 import hashlib
+import base64
 
-from flasky import files
+from flasky import files, users
+from flasky.utils import  gen_token, verify_token
 
 flasky = Blueprint('flasky', __name__)
+
+
+
 
 # 文件大小限制，默认为16MB
 
@@ -79,20 +84,45 @@ def add_entry():
     return redirect(url_for('show_entries'))
 
 
+
 @flasky.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    if request.method == 'POST':
-        if request.form['username'] != current_app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != current_app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('flasky.show_entries'))
-    return render_template('login.html', error=error)
+    if request.method == 'GET':
+        return render_template('login.html', error=error)
 
+    uid, pw = base64.b64decode(request.headers['Authorization'].split(' ')[-1]).decode().split(':')
+    print(uid,pw)
+    print(users.get(uid))
+    # uid = request.form['username']
+    # pw = request.form['password']
+    if pw in users.get(uid):
+        return gen_token(uid)
+    else:
+        return "error"
+
+    # error = None
+    #
+    #
+    # if request.method == 'POST':
+    #     if request.form['username'] not in users.keys():
+    #         error = 'Invalid username'
+    #     elif request.form['password'] != users[request.form['username']][0]:
+    #         error = 'Invalid password'
+    #     else:
+    #         session['logged_in'] = True
+    #         flash('You were logged in')
+    #         return redirect(url_for('flasky.show_entries'))
+    # return render_template('login.html', error=error)
+
+
+@flasky.route('/test', methods=['POST', 'GET'])
+def test():
+    token = request.args.get('token')
+    if verify_token(token):
+        return 'data'
+    else:
+        return "error"
 
 @flasky.route('/logout')
 def logout():

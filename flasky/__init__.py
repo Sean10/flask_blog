@@ -12,6 +12,9 @@ api = Api()
 bootstrap = Bootstrap()
 DEFAULT = TEXT + DOCUMENTS + IMAGES + DATA + AUDIO
 files = UploadSet('files',DEFAULT)
+users = {
+    "admin": ["default"]
+}
 
 def create_app(config=None):
     app = Flask(__name__)
