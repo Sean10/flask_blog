@@ -5,8 +5,10 @@ from config import config
 app = create_app(config)
 
 
-from flasky.flaskr import main, init_db
-app.register_blueprint(main)
+from flasky.flaskr import flasky, init_db
+from flasky.todo import todo
+app.register_blueprint(flasky)
+app.register_blueprint(todo, url_prefix='/todo')
 
 
 

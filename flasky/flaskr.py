@@ -16,7 +16,7 @@ import hashlib
 
 from flasky import files
 
-main = Blueprint('flasky', __name__)
+flasky = Blueprint('flasky', __name__)
 
 # 文件大小限制，默认为16MB
 
@@ -59,7 +59,7 @@ def get_db():
 
 
 
-@main.route('/')
+@flasky.route('/')
 def show_entries():
     db = get_db()
     cur = db.execute('select title, text from entries order by id desc')
@@ -67,7 +67,7 @@ def show_entries():
     return render_template('show_entries.html', entries=entries)
 
 
-@main.route('/add', methods=['POST'])
+@flasky.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
@@ -79,7 +79,7 @@ def add_entry():
     return redirect(url_for('show_entries'))
 
 
-@main.route('/login', methods=['GET', 'POST'])
+@flasky.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
@@ -94,7 +94,7 @@ def login():
     return render_template('login.html', error=error)
 
 
-@main.route('/logout')
+@flasky.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
@@ -109,16 +109,8 @@ class UploadForm(FlaskForm):
     submit = SubmitField(u'上传')
 
 
-@main.route('/upload', methods=['GET','POST'])
+@flasky.route('/upload', methods=['GET','POST'])
 def upload_file():
-    # if request.method == 'POST' and 'photo' in request.files:
-    #     filename = files.save(request.files['photo'])
-    #     file_url = files.url(filename)
-    #     # rec = Photo(filename=filename, user=g.user.id)
-    #     # rec.store()
-    #     flash("Photo saved.")
-    #     return redirect(url_for("show",name=filename))
-    # return render_template("upload.html")
     form = UploadForm()
     if form.validate_on_submit():
         for filedata in request.files.getlist('file'):
@@ -131,35 +123,34 @@ def upload_file():
         filename = None
     return render_template('upload.html', form=form,name=filename)
 
-@main.route('/show')
+@flasky.route('/show')
 def show_all():
     photos_list = os.listdir(current_app.config['UPLOADED_FILES_DEST'])
     return render_template('show_all.html', photos_list=photos_list)
 
-@main.route('/show/<filename>')
+@flasky.route('/show/<filename>')
 def show(filename):
     if filename is None:
         abort(404)
     file_url = files.url(filename)
     return render_template('show.html', file_url=file_url, filename=filename)
 
-@main.route('/download/<filename>', methods=['GET'])
+@flasky.route('/download/<filename>', methods=['GET'])
 def download(filename):
     directory = os.path.join(os.getcwd(),current_app.config['UPLOADED_FILES_DEST'])
     # print(directory)
     # print(filename)
     return send_from_directory(directory, filename, as_attachment=True)
 
-@main.route('/about', methods=['GET'])
+@flasky.route('/about', methods=['GET'])
 def about():
     return render_template("about.html")
 
-@main.route('/course', methods=['GET'])
+@flasky.route('/course', methods=['GET'])
 def course():
-
     return render_template("course.html")
 
 
-@main.errorhandler(404)
+@flasky.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
