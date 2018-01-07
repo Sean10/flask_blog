@@ -5,7 +5,7 @@ import os
 from sqlite3 import dbapi2 as sqlite3
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash, send_from_directory, Blueprint, current_app, jsonify
+     render_template, flash, send_from_directory, Blueprint, current_app, make_response
 #from werkzeug import secure_filename
 from flask_restful import Resource, reqparse
 from flask_wtf import FlaskForm
@@ -14,10 +14,12 @@ from wtforms import SubmitField
 import time
 import hashlib
 import base64
+import json
 
 from flasky import files, users, auth_code, oauth_redirect_uri
 from flasky.utils import  gen_token, verify_token, gen_auth_code
 
+from datetime import datetime, timedelta
 flasky = Blueprint('flasky', __name__)
 
 
@@ -120,8 +122,9 @@ def login():
 def test():
     token = request.args.get('token')
     print(token)
-    if verify_token(token):
-        return 'data'
+    ret = verify_token(token)
+    if ret:
+        return json.dumps(ret)
     else:
         return "error"
 
@@ -183,20 +186,42 @@ def course():
 
 @flasky.route('/oauth', methods=['GET', 'POST'])
 def oauth():
-    if request.args.get('user'):
-        if users.get(request.args.get('user'))[0] == request.args.get('pw') and oauth_redirect_uri:
+    if request.method == "POST" and request.form['user']:
+        u = request.form['user']
+        p = request.form['pw']
+        print(u,p)
+        if users.get(u)[0] == p and oauth_redirect_uri:
             uri = oauth_redirect_uri[0] + '?code=%s' % gen_auth_code(oauth_redirect_uri[0])
-            print(uri)
-            return redirect(uri)
+            expire_date = datetime.now() + timedelta(minutes=1)
+            resp = make_response(redirect(uri))
+            resp.set_cookie('login', '_'.join([u,p]), expires=expire_date)
+            return resp
+            # print(uri)
+            # return redirect(uri)
     if request.args.get('code'):
-        if auth_code.get(int(request.args.get('code'))) == request.args.get('redirect_uri'):
+        auth_info = auth_code.get(int(request.args.get('code')))
+        print(auth_info)
+        print(request.args.get("redirect_uri"))
+        if auth_info == request.args.get('redirect_uri'):
             print("succeed")
-            return gen_token(request.args.get("client_id"))
+            # 可以在授权码的auth_code中存储用户id,存进token中
+            return gen_token(dict(client_id=request.args.get("client_id")))
     if request.args.get('redirect_uri'):
         print(request.args)
         oauth_redirect_uri.append(request.args.get('redirect_uri'))
-    print(oauth_redirect_uri)
-    return 'please login'
+        if request.cookies.get('login'):
+            u, p = request.cookies.get('login').split('_')
+            if users.get(u)[0] == p:
+                uri = oauth_redirect_uri[0] + "?code=%s" % gen_auth_code(oauth_redirect_uri[0])
+                return redirect(uri)
+    # print(oauth_redirect_uri)
+        return '''
+            <form action="" method="post">
+                <p><input type=text name=user></p>
+                <p><input type=text name=pw></p>
+                <p><input type=submit value=Login></p>
+                </form>
+        '''
 
 
 @flasky.errorhandler(404)
