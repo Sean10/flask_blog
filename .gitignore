@@ -6,3 +6,4 @@ instance/
 /.idea
 */.DS_Store
 .DS_Store
+/node_module
