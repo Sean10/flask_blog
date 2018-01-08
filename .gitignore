@@ -1,9 +1,11 @@
-/__pycache__
+__pycache__/
 /data
 *.db
 *.pyc
 instance/
-/.idea
+.idea/
 */.DS_Store
 .DS_Store
-/node_module
+node_modules/
+dist/
+data/
