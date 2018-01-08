@@ -1,15 +1,22 @@
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request, send_file, make_response
 from flask_restful import reqparse, abort, Api, Resource
-
+from flasky.utils import allow_cross_domain
 
 todo = Blueprint('todo', __name__)
 api = Api(todo)
 
-TODOS = {
-    'todo1': {'task': 'build an API'},
-    'todo2': {'task': '?????'},
-    'todo3': {'task': 'profit!'},
-}
+TODOS = [
+    {'id': 1,
+     'task': u'build an API'
+    },
+    {'id': 2,
+     'task': u'?????'
+    },
+    {
+    'id': 3,
+    'task': u'profit!'
+    }
+]
 
 tasks = [
     {
@@ -37,6 +44,7 @@ parser.add_argument('task', type=str)
 # Todo
 #   show a single todo item and lets you delete them
 class Todo(Resource):
+    @allow_cross_domain
     def get(self, todo_id):
         abort_if_todo_doesnt_exist(todo_id)
         return TODOS[todo_id]
@@ -56,8 +64,14 @@ class Todo(Resource):
 # TodoList
 #   shows a list of all todos, and lets you POST to add new tasks
 class TodoList(Resource):
+    # @allow_cross_domain
     def get(self):
-        return TODOS
+        rst = make_response(jsonify(TODOS))
+        rst.headers['Access-Control-Allow-Origin'] = '*'
+        rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+        allow_headers = "Referer,Accept,Origin,User-Agent"
+        rst.headers['Access-Control-Allow-Headers'] = allow_headers
+        return rst
 
     def post(self):
         args = parser.parse_args()

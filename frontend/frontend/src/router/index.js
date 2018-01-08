@@ -5,12 +5,9 @@ import TodoList from '@/components/TodoList'
 
 Vue.use(Router)
 
-const Foo = { template:`<div id="todo">
-		<h1>My Test App!</h1>
-	</div>`, component: Foo}
-
 
 export default new Router({
+	mode: 'history',
   routes: [
     {
       path: '/hello',
@@ -18,13 +15,9 @@ export default new Router({
       component: HelloWorld
   },
   {
-      path: '/Foo',
-      name: 'Foo',
-      component: Foo
-  },
-  {
       path: '/todo',
       name: 'todo',
+	  // props: ['todos']
       component: TodoList
   }
   ]

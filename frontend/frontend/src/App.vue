@@ -1,9 +1,9 @@
 <template>
 <div id="app">
 	<!-- <div class="line"></div> -->
-	<el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+	<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
 		<el-menu-item index="1">
-			<router-link to="/foo">Go to Foo</router-link>
+			<router-link to="/todo">Go to Todo</router-link>
 		</el-menu-item>
 		<!-- <router-link :to="/todo">Todo</router-link> -->
 		<el-submenu index="2">
@@ -17,13 +17,13 @@
 
 	<img src="./assets/logo.png">
 	<router-view></router-view>
-	<el-button>默认按钮</el-button>
+	<!-- <el-button>默认按钮</el-button>
 	<el-button type="primary">主要按钮</el-button>
 	<el-button type="text">文字按钮</el-button>
 	<el-input-number v-model="num1" @change="handleChange" :min="1" :max="10"></el-input-number>
 	<br />
 	<el-input placeholder="elinput输入框">a</el-input>
-	<input placeholder="input输入框">b</input>
+	<input placeholder="input输入框">b</input> -->
 </div>
 </template>
 
@@ -34,7 +34,6 @@ export default {
 		return {
 			num1: 1,
 			activeIndex: '1',
-			activeIndex2: '1'
 		};
 	},
 	methods: {

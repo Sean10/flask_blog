@@ -5,6 +5,10 @@ import App from './App'
 import router from './router'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import axios from 'axios'
+
+// Vue.prototype.$http = axios
+Vue.prototype.$axios = axios;
 
 Vue.use(Element, { size: 'small' })
 
@@ -18,4 +22,4 @@ const app = new Vue({
   router,
   template: '<App/>',
   components: { App }
-}).$mount('#app')
+})

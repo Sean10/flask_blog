@@ -5,6 +5,8 @@ import json
 import hmac
 
 from flasky import users, auth_code
+from functools import wraps
+from flask import make_response
 
 TIMEOUT = 3600 * 2
 # 新版本token生成器
@@ -65,3 +67,17 @@ def gen_auth_code(uri):
     code = random.randint(0, 10000)
     auth_code[code] = uri
     return code
+
+def allow_cross_domain(fun):
+    @wraps(fun)
+    def wrapper_fun(*args, **kwargs):
+        print("hee")
+        print(fun)
+        rst = make_response(fun(*args, **kwargs))
+        rst.headers['Access-Control-Allow-Origin'] = '*'
+        rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+        allow_headers = "Referer,Accept,Origin,User-Agent"
+        rst.headers['Access-Control-Allow-Headers'] = allow_headers
+        print("hee2")
+        return rst
+    return wrapper_fun

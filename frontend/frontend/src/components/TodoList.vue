@@ -1,10 +1,10 @@
 <template>
 	<div id='TodoList'>
-		<BaseInputText
+		<!-- <BaseInputText
 			v-model="newTodoText"
 			placeholder="New todo"
 			@keydown.enter="addTodo"
-		/>
+		/> -->
 		<ul v-if="todos.length">
 			<TodoListItem
 				v-for="todo in todos"
@@ -30,23 +30,26 @@ export default {
 		BaseInputText, TodoListItem
 	},
   data () {
-    return {
-			newTodoText: '',
+     var info = {
+ 		newTodoText: '',
+
       todos: [
 				{
 					id: nextTodoId++,
-					text: 'Learn Vue'
+					task: 'Learn Vue'
 				},
 				{
 					id: nextTodoId++,
-					text: 'Learn about single-file components'
+					task: 'Learn about single-file components'
 				},
 				{
 					id: nextTodoId++,
-					text: 'Fall in love'
+					task: 'Fall in love'
 				}
 			]
     }
+	this.create();
+	return info;
   },
 	methods: {
 		addTodo () {
@@ -63,9 +66,22 @@ export default {
 			this.todos = this.todos.filter(todo => {
 				return todo.id !== idToRemove
 			})
+		},
+		create () {
+			// this.$http({
+			// 	method: 'get',
+			// 	url: '/todo',
+			// 	// data: {
+			// 	// 	todo_id: ''
+			// 	// }
+			// })
+			console.log("succeed");
+			this.$axios.get("http://localhost:5000/todo/").then(response => { console.log(response.data);this.todos = response.data})
 		}
 	}
 }
+
+
 </script>
 
 <style>
