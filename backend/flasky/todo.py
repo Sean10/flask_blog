@@ -1,9 +1,10 @@
-from flask import Blueprint, jsonify, request, send_file, make_response
+from flask import Blueprint, jsonify, request, send_file, make_response,current_app
 from flask_restful import reqparse, abort, Api, Resource
 # from flasky.utils import allow_cross_domain
 from flask_cors import CORS
 # from flask_uploads import images
 from flasky import files
+import os
 
 
 todo = Blueprint('todo', __name__)
@@ -54,9 +55,16 @@ class Todo(Resource):
         return TODOS[todo_id]
 
     def delete(self, todo_id):
-        abort_if_todo_doesnt_exist(todo_id)
-        del TODOS[todo_id]
-        return '', 204
+        # abort_if_todo_doesnt_exist(todo_id)
+        # del TODOS[todo_id]
+        # return '', 204
+
+        print(request.json)
+        id = request.json['id']
+        for task in TODOS:
+            if id == task['id']:
+                TODOS.remove(task)
+                return jsonify(TODOS), 201
 
     def put(self, todo_id):
         args = parser.parse_args()
@@ -64,25 +72,32 @@ class Todo(Resource):
         TODOS[todo_id] = task
         return task, 201
 
+    def post(self, todo_id):
+        # args = parser.parse_args()
+        # print(request.json['params'])
+        # print(TODOS[-1])
+        # todo_id = int(TODOS[-1].lstrip('todo')) + 1
+        # print(todo_id)
+        # todo_id = 'todo%i' % todo_id
+        # data = request.json['params']['task']
+        # print(data)
+        todo = {
+            'id': todo_id,
+            'task': request.json['params']['task']
+        }
+        TODOS.append(todo)
+        return TODOS[-1]
+
+    # def options(self, todo_id):
+    #     print(request.json)
+    #     pass;
 
 # TodoList
 #   shows a list of all todos, and lets you POST to add new tasks
 class TodoList(Resource):
-    # @allow_cross_domain
     def get(self):
         rst = make_response(jsonify(TODOS))
-        # rst.headers['Access-Control-Allow-Origin'] = '*'
-        # rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
-        # allow_headers = "Referer,Accept,Origin,User-Agent"
-        # rst.headers['Access-Control-Allow-Headers'] = allow_headers
         return rst
-
-    def post(self):
-        args = parser.parse_args()
-        todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        todo_id = 'todo%i' % todo_id
-        TODOS[todo_id] = {'task': args['task']}
-        return TODOS[todo_id], 201
 
 
 class getTasks(Resource):
@@ -133,7 +148,8 @@ class test(Resource):
 
 class upload(Resource):
     def get(self):
-        pass
+        fileList = os.listdir(current_app.config['UPLOADED_FILES_DEST'])
+        return jsonify(fileList)
 
     def post(self):
         print(request.headers)

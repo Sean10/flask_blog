@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import TodoList from '@/components/TodoList'
 import Login from '../view/Login'
 import UploadView from '../view/upload_view'
+import About from '../view/about'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/uploads',
       name: 'uploads',
       component: UploadView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About
     }
   ]
 })

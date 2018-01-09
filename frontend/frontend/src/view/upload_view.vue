@@ -11,7 +11,11 @@
         name: "upload_view",
       components: {
           Upload
-      }
+      },
+      // props: {
+      //     type: object,
+      //     required: true
+      // }
     }
 </script>
 
