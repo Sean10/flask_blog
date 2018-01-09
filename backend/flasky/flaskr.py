@@ -10,6 +10,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from flask_restful import Resource, reqparse
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
+from flask_security import auth_token_required, login_required, http_auth_required
 from wtforms import SubmitField
 import time
 import hashlib
@@ -224,6 +225,27 @@ def oauth():
         '''
 
 
+
 @flasky.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+# @flasky.before_first_request
+# def create_user():
+#     db.create_all()
+#     if not User.query.first():
+#         user_datastore.create_user(email='aaa@bbb.com', password='password')
+#         db.session.commit()
+#
+# # Views
+# @flasky.route('/')
+# @login_required
+# def home():
+#     return 'you\'re logged in!'
+#
+# @flasky.route('/api')
+# #@http_auth_required
+# @auth_token_required
+# def token_protected():
+#     return 'you\'re logged in by Token!'
+

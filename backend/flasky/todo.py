@@ -1,8 +1,13 @@
 from flask import Blueprint, jsonify, request, send_file, make_response
 from flask_restful import reqparse, abort, Api, Resource
-from flasky.utils import allow_cross_domain
+# from flasky.utils import allow_cross_domain
+from flask_cors import CORS
+# from flask_uploads import images
+from flasky import files
+
 
 todo = Blueprint('todo', __name__)
+CORS(todo)
 api = Api(todo)
 
 TODOS = [
@@ -44,7 +49,6 @@ parser.add_argument('task', type=str)
 # Todo
 #   show a single todo item and lets you delete them
 class Todo(Resource):
-    @allow_cross_domain
     def get(self, todo_id):
         abort_if_todo_doesnt_exist(todo_id)
         return TODOS[todo_id]
@@ -67,10 +71,10 @@ class TodoList(Resource):
     # @allow_cross_domain
     def get(self):
         rst = make_response(jsonify(TODOS))
-        rst.headers['Access-Control-Allow-Origin'] = '*'
-        rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
-        allow_headers = "Referer,Accept,Origin,User-Agent"
-        rst.headers['Access-Control-Allow-Headers'] = allow_headers
+        # rst.headers['Access-Control-Allow-Origin'] = '*'
+        # rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+        # allow_headers = "Referer,Accept,Origin,User-Agent"
+        # rst.headers['Access-Control-Allow-Headers'] = allow_headers
         return rst
 
     def post(self):
@@ -127,9 +131,43 @@ class test(Resource):
         return send_file("templates/tasks.html")
 ## Actually setup the Api resource routing here
 
+class upload(Resource):
+    def get(self):
+        pass
+
+    def post(self):
+        print(request.headers)
+        print(request.files)
+        filename = files.save(request.files['file'])
+        print(filename)
+        return filename
+        # try:
+        #     if 'recipe_image' in request.files:
+        #         filename = files.save(request.files['recipe_image'])
+        #         self.image_filename = filename
+        #         self.image_url = files.url(filename)
+        #     else:
+        #         json_data = request.get_json()
+        #         self.recipe_title = json_data['title']
+        #         self.recipe_description = json_data['description']
+        #         if 'recipe_type' in json_data:
+        #             self.recipe_type = json_data['recipe_type']
+        #         if 'rating' in json_data:
+        #             self.rating = json_data['rating']
+        #         if 'ingredients' in json_data:
+        #             self.ingredients = json_data['ingredients']
+        #         if 'recipe_steps' in json_data:
+        #             self.recipe_steps = json_data['recipe_steps']
+        #         if 'inspiration' in json_data:
+        #             self.inspiration = json_data['inspiration']
+        # except KeyError as e:
+        #     raise ValidationError('Invalid recipe: missing ' + e.args[0])
+        # return jsonify(self)
+
 api.add_resource(test, "/api")
 api.add_resource(getTasks, "/api/tasks")
 api.add_resource(addTask, "/api/addTask")
 api.add_resource(deleteTask, "/api/deleteTask")
 api.add_resource(TodoList, '/')
 api.add_resource(Todo, '/<todo_id>')
+api.add_resource(upload, '/api/upload')

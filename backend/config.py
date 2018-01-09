@@ -11,4 +11,7 @@ class config():
     DEBUG = True
     SECRET_KEY = 'development key'
     UPLOADED_FILES_DEST = "./data"
-
+    SECURITY_TRACKABLE = True
+    SECURITY_REGISTERABLE = True
+    SECURITY_SEND_REGISTER_EMAIL = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///.security-dev.sqlite'
