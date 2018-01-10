@@ -22,6 +22,7 @@
 <script>
   import BaseInputText from './BaseInputText.vue'
   import TodoListItem from './TodoListItem.vue'
+  import qs from 'axios'
 
   let nextTodoId = 1
 
@@ -59,16 +60,19 @@
       addTodo() {
         const trimmedText = this.newTodoText.trim()
         if (trimmedText) {
-            this.$axios.post("http://localhost:5000/todo/"+nextTodoId, {
-              params: {
-                task: trimmedText
-              }
-            }).then(response => {
+            // var parm = new URLSearchParams();
+            // parm.append('task',trimmedText);
+            // console.log(parm);
+            var qs = require('qs');
+            console.log(qs.stringify({'task':trimmedText}));
+            this.$axios.post("http://localhost:5000/todo/"+nextTodoId, qs.stringify({'task':trimmedText})).then(response => {
               console.log(response.data['id']);
-              this.todos.push({
-                id: response.data['id'],
-                text: response.data['task']
-              });
+              if(response.data) {
+                this.todos.push({
+                  id: response.data['id'],
+                  text: response.data['task']
+                });
+              }
               // this.todos.push({id: nextTodoId, task: response.data});
             })
           this.newTodoText = ''
@@ -81,11 +85,12 @@
           response => {
             console.log(response.data);
             this.todos = response.data;
+            this.todos = this.todos.filter(todo => {
+              return todo.id !== idToRemove
+            })
           }
         )
-        this.todos = this.todos.filter(todo => {
-          return todo.id !== idToRemove
-        })
+
       },
       create() {
         console.log("succeed");

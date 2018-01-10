@@ -23,25 +23,33 @@ TODOS = [
     'task': u'profit!'
     }
 ]
-
-tasks = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
-        'done': False
-    }
-]
+#
+# tasks = [
+#     {
+#         'id': 1,
+#         'title': u'Buy groceries',
+#         'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
+#         'done': False
+#     },
+#     {
+#         'id': 2,
+#         'title': u'Learn Python',
+#         'description': u'Need to find a good Python tutorial on the web',
+#         'done': False
+#     }
+# ]
 
 def abort_if_todo_doesnt_exist(todo_id):
-    if todo_id not in TODOS:
-        abort(404, message="Todo {} doesn't exist".format(todo_id))
+    temp_id = int(todo_id)
+
+    print(type(temp_id))
+    for task in TODOS:
+        # print(type(task['id']), type(todo_id))
+        if task['id'] == temp_id:
+            print("succeed")
+            return True
+    abort(404, message="Todo {} doesn't exist".format(todo_id))
+    return False
 
 parser = reqparse.RequestParser()
 parser.add_argument('task', type=str)
@@ -51,47 +59,46 @@ parser.add_argument('task', type=str)
 #   show a single todo item and lets you delete them
 class Todo(Resource):
     def get(self, todo_id):
-        abort_if_todo_doesnt_exist(todo_id)
-        return TODOS[todo_id]
+        print(request);
+        if abort_if_todo_doesnt_exist(todo_id):
+            for task in TODOS:
+                if task['id'] == int(todo_id):
+                    return jsonify(task)
+        # return 404
 
     def delete(self, todo_id):
-        # abort_if_todo_doesnt_exist(todo_id)
-        # del TODOS[todo_id]
-        # return '', 204
-
-        print(request.json)
-        id = request.json['id']
-        for task in TODOS:
-            if id == task['id']:
-                TODOS.remove(task)
-                return jsonify(TODOS), 201
-
+        # print(type(request))
+        print(request.data)
+        id = int(todo_id)
+        if abort_if_todo_doesnt_exist(todo_id):
+            for task in TODOS:
+                if id == task['id']:
+                    TODOS.remove(task)
+                    return jsonify(TODOS)
+    #
     def put(self, todo_id):
-        args = parser.parse_args()
-        task = {'task': args['task']}
-        TODOS[todo_id] = task
-        return task, 201
+        # args = parser.parse_args()
+        task_temp = request.json['task']
+        todo_id = int(todo_id)
+        if abort_if_todo_doesnt_exist(todo_id):
+            for task in TODOS:
+                if todo_id == task['id']:
+                    task['task'] = task_temp
+                    return jsonify(task)
 
     def post(self, todo_id):
         # args = parser.parse_args()
-        # print(request.json['params'])
-        # print(TODOS[-1])
-        # todo_id = int(TODOS[-1].lstrip('todo')) + 1
-        # print(todo_id)
-        # todo_id = 'todo%i' % todo_id
-        # data = request.json['params']['task']
-        # print(data)
+        print(request.json)
         todo = {
-            'id': todo_id,
-            'task': request.json['params']['task']
+            'id': TODOS[-1]['id']+1,
+            'task': request.json['task']
         }
         TODOS.append(todo)
+        print(TODOS[-1])
         return TODOS[-1]
 
     # def options(self, todo_id):
-    #     print(request.json)
-    #     pass;
-
+    #     return 200
 # TodoList
 #   shows a list of all todos, and lets you POST to add new tasks
 class TodoList(Resource):
@@ -100,63 +107,62 @@ class TodoList(Resource):
         return rst
 
 
-class getTasks(Resource):
-    def get(self):
-        return jsonify({"tasks": tasks})
+# class getTasks(Resource):
+#     def get(self):
+#         return jsonify({"tasks": tasks})
 
 
-class addTask(Resource):
-    def post(self):
-        print(request)
-        if request.json['title'] == "":
-            abort(400)
-        print(request.json['title'])
-        task = {
-            'id': tasks[-1]['id'] + 1,
-            'title': request.json['title'],
-            'description': request.json.get('description', ""),
-            'done': False
-        }
-        tasks.append(task)
-        print(tasks)
-        return jsonify({'tasks': tasks})
-
-
-class deleteTask(Resource):
-    def delete(self):
-        task_id = request.json['id']
-        for task in tasks:
-            if task_id == task['id']:
-                tasks.remove(task)
-                return jsonify({'tasks': tasks}), 201
+# class addTask(Resource):
+#     def post(self):
+#         print(request)
+#         if request.json['title'] == "":
+#             abort(400)
+#         print(request.json['title'])
+#         task = {
+#             'id': tasks[-1]['id'] + 1,
+#             'title': request.json['title'],
+#             'description': request.json.get('description', ""),
+#             'done': False
+#         }
+#         tasks.append(task)
+#         print(tasks)
+#         return jsonify({'tasks': tasks})
+#
+#
+# class deleteTask(Resource):
+#     def delete(self):
+#         task_id = request.json['id']
+#         for task in tasks:
+#             if task_id == task['id']:
+#                 tasks.remove(task)
+#                 return jsonify({'tasks': tasks}), 201
 
 
 @todo.errorhandler(404)
 def handle_api_not_found(error):
     # response 的 json 内容为自定义错误代码和错误信息
     response = jsonify({'error': "not found"})
-
     # response 返回 error 发生时定义的标准错误代码
     response.status_code = error.status_code
 
     return response
-
-class test(Resource):
-    def get(self):
-        return send_file("templates/tasks.html")
+#
+# class test(Resource):
+#     def get(self):
+#         return send_file("templates/tasks.html")
 ## Actually setup the Api resource routing here
-
-class upload(Resource):
-    def get(self):
-        fileList = os.listdir(current_app.config['UPLOADED_FILES_DEST'])
-        return jsonify(fileList)
-
-    def post(self):
-        print(request.headers)
-        print(request.files)
-        filename = files.save(request.files['file'])
-        print(filename)
-        return filename
+#
+# class upload(Resource):
+#     def get(self):
+#         fileList = os.listdir(current_app.config['UPLOADED_FILES_DEST'])
+#         return jsonify(fileList)
+#
+#     def post(self):
+#         print(request.headers)
+#         print(request.files)
+#         filename = files.save(request.files['file'])
+#         print(filename)
+#         return filename
         # try:
         #     if 'recipe_image' in request.files:
         #         filename = files.save(request.files['recipe_image'])
@@ -180,10 +186,10 @@ class upload(Resource):
         #     raise ValidationError('Invalid recipe: missing ' + e.args[0])
         # return jsonify(self)
 
-api.add_resource(test, "/api")
-api.add_resource(getTasks, "/api/tasks")
-api.add_resource(addTask, "/api/addTask")
-api.add_resource(deleteTask, "/api/deleteTask")
-api.add_resource(TodoList, '/')
-api.add_resource(Todo, '/<todo_id>')
-api.add_resource(upload, '/api/upload')
+# api.add_resource(test, "/api")
+# api.add_resource(getTasks, "/api/tasks")
+# api.add_resource(addTask, "/api/addTask")
+# api.add_resource(deleteTask, "/api/deleteTask")
+api.add_resource(TodoList, '/api/todos/')
+api.add_resource(Todo, '/api/todos/<todo_id>')
+# api.add_resource(upload, '/api/upload')
