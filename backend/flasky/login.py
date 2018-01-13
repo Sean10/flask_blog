@@ -6,7 +6,7 @@
 # @File    : login.py
 # @Software: PyCharm
 
-from ..flasky import auth, users
+from . import auth, users
 
 @auth.get_password
 def get_pw(username):

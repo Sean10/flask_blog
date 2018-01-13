@@ -6,7 +6,7 @@
 # @File    : models.py
 # @Software: PyCharm
 
-from .flasky import db
+from . import db
 
 class Role(db.Model):
     __tablename__ = "roles"
@@ -34,4 +34,3 @@ class UserPW(db.Model):
     def __repr__(self):
         return '<Username %r, Password %r>' % (self.username, self.password)
 
-db.create_all()
