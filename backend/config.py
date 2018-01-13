@@ -1,7 +1,5 @@
 
-from flask_bootstrap import Bootstrap
-from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash, send_from_directory, jsonify
+import pymysql
 import os
 
 class config():
@@ -14,4 +12,5 @@ class config():
     SECURITY_TRACKABLE = True
     SECURITY_REGISTERABLE = True
     SECURITY_SEND_REGISTER_EMAIL = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///.security-dev.sqlite'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:admin@localhost/db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = True

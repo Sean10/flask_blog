@@ -10,8 +10,8 @@ import requests
 import json
 
 headers = {'Content-Type': 'application/json'}
-# p1 = requests.get("http://127.0.0.1:5000/todo/api/todos")
-# print(p1.text)
+p1 = requests.get("http://127.0.0.1:5000/todo/api/todos")
+print(p1.text)
 #
 #
 # p3 = requests.get("http://127.0.0.1:5000/todo/api/todos/3")
@@ -27,6 +27,6 @@ headers = {'Content-Type': 'application/json'}
 #
 # p4 = requests.delete("http://127.0.0.1:5000/todo/api/todos/2")
 # print(p4.text)
-payload = {'task': "new test"}
-p5 = requests.put("http://127.0.0.1:5000/todo/api/todos/3", data=json.dumps(payload), headers=headers)
-print(p5.text)
+# payload = {'task': "new test"}
+# p5 = requests.put("http://127.0.0.1:5000/todo/api/todos/3", data=json.dumps(payload), headers=headers)
+# print(p5.text)

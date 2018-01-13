@@ -5,6 +5,7 @@ from flask_cors import CORS
 # from flask_uploads import images
 from flasky import files
 import os
+from flasky.models import User, Role, db
 
 
 todo = Blueprint('todo', __name__)
@@ -23,21 +24,6 @@ TODOS = [
     'task': u'profit!'
     }
 ]
-#
-# tasks = [
-#     {
-#         'id': 1,
-#         'title': u'Buy groceries',
-#         'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-#         'done': False
-#     },
-#     {
-#         'id': 2,
-#         'title': u'Learn Python',
-#         'description': u'Need to find a good Python tutorial on the web',
-#         'done': False
-#     }
-# ]
 
 def abort_if_todo_doesnt_exist(todo_id):
     temp_id = int(todo_id)
@@ -58,12 +44,16 @@ parser.add_argument('task', type=str)
 # Todo
 #   show a single todo item and lets you delete them
 class Todo(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument("task", type=str, required=True, help="No tasks here", location='json')
+
     def get(self, todo_id):
         print(request);
         if abort_if_todo_doesnt_exist(todo_id):
             for task in TODOS:
                 if task['id'] == int(todo_id):
-                    return jsonify(task)
+                    return jsonify(task),200
         # return 404
 
     def delete(self, todo_id):
@@ -74,7 +64,7 @@ class Todo(Resource):
             for task in TODOS:
                 if id == task['id']:
                     TODOS.remove(task)
-                    return jsonify(TODOS)
+                    return jsonify(TODOS), 204
     #
     def put(self, todo_id):
         # args = parser.parse_args()
@@ -95,16 +85,21 @@ class Todo(Resource):
         }
         TODOS.append(todo)
         print(TODOS[-1])
-        return TODOS[-1]
+        return TODOS[-1], 201
 
     # def options(self, todo_id):
     #     return 200
 # TodoList
 #   shows a list of all todos, and lets you POST to add new tasks
 class TodoList(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument("task", type=str, required=True, help="No tasks here", location='json')
+
+
     def get(self):
         rst = make_response(jsonify(TODOS))
-        return rst
+        return rst,200
 
 
 # class getTasks(Resource):

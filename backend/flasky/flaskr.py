@@ -23,23 +23,6 @@ from flasky.utils import  gen_token, verify_token, gen_auth_code
 from datetime import datetime, timedelta
 flasky = Blueprint('flasky', __name__)
 
-
-
-
-# 文件大小限制，默认为16MB
-
-# parser = reqparse.RequestParser()
-#
-#
-# class Flasky(Resource):
-#     def show_entries(self):
-#         db = get_db()
-#         cur = db.execute('select title, text from entries order by id desc')
-#         entries = cur.fetchall()
-#         return render_template('show_entries.html', entries=entries)
-#
-# api.add_resource(Flasky, '/')
-
 def connect_db():
     """Connects to the specific database."""
     print(current_app.config['DATABASE'])
