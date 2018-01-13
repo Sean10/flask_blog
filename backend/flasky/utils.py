@@ -4,7 +4,7 @@ import base64
 import json
 import hmac
 
-from flasky import users, auth_code
+from . import users, auth_code
 from functools import wraps
 from flask import make_response
 

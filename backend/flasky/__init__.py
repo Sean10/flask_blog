@@ -1,21 +1,22 @@
-from flask import Flask, g
+from flask import Flask
 from werkzeug.utils import find_modules, import_string
 from flask_uploads import UploadSet, configure_uploads,\
  patch_request_class,IMAGES, TEXT, DOCUMENTS, DATA, AUDIO
-# from ..config import configx
 from flask_restful import Api
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_httpauth import HTTPBasicAuth
 from flask_security import SQLAlchemyUserDatastore,Security, UserMixin,RoleMixin
 import os
 
 api = Api()
 bootstrap = Bootstrap()
 db = SQLAlchemy()
+auth = HTTPBasicAuth()
 DEFAULT = TEXT + DOCUMENTS + IMAGES + DATA + AUDIO
 files = UploadSet('files',DEFAULT)
 users = {
-    "admin": ["default"]
+    "admin": ["admin"]
 }
 
 auth_code = {
@@ -31,6 +32,8 @@ def create_app(config=None):
 
     bootstrap.init_app(app)
     api.init_app(app)
+    # with app.app_context():
+    app.app_context().push();
     db.init_app(app)
 
     configure_uploads(app, files)
@@ -47,5 +50,8 @@ def register_blueprints(app):
         if hasattr(mod, 'main'):
             app.register_blueprint(mod.bp)
     return None
+
+
+
 
 

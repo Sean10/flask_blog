@@ -6,12 +6,13 @@
 # @File    : models.py
 # @Software: PyCharm
 
-from flasky import db
+from .flasky import db
 
 class Role(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     name = db.Column(db.String(80), unique=True)
+
 
     def __repr__(self):
         return '<Role %r>' % self.name
@@ -24,5 +25,13 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r,Role id %r>' %(self.username,self.role_id)
 
+class UserPW(db.Model):
+    __tablename__ = "usernamepassword"
+    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
+    password = db.Column(db.String(32), nullable=False, server_default='0')
 
-# db.create_all()
+    def __repr__(self):
+        return '<Username %r, Password %r>' % (self.username, self.password)
+
+db.create_all()

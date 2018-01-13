@@ -17,8 +17,8 @@ import hashlib
 import base64
 import json
 
-from flasky import files, users, auth_code, oauth_redirect_uri
-from flasky.utils import  gen_token, verify_token, gen_auth_code
+from . import files, users, auth_code, oauth_redirect_uri
+from .utils import  gen_token, verify_token, gen_auth_code
 
 from datetime import datetime, timedelta
 flasky = Blueprint('flasky', __name__)

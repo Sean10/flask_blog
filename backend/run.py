@@ -1,8 +1,10 @@
 from flasky import create_app
 from config import config
 
+
 app = create_app(config)
 
+# db.create_all()
 
 from flasky.flaskr import flasky, init_db
 from flasky.todo import todo

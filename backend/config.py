@@ -12,5 +12,5 @@ class config():
     SECURITY_TRACKABLE = True
     SECURITY_REGISTERABLE = True
     SECURITY_SEND_REGISTER_EMAIL = False
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:admin@localhost/db'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:admin@localhost:3306/test_flask'
     SQLALCHEMY_TRACK_MODIFICATIONS = True

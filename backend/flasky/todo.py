@@ -3,9 +3,9 @@ from flask_restful import reqparse, abort, Api, Resource
 # from flasky.utils import allow_cross_domain
 from flask_cors import CORS
 # from flask_uploads import images
-from flasky import files
+from . import files
 import os
-from flasky.models import User, Role, db
+# from flasky.models import User, Role, db
 
 
 todo = Blueprint('todo', __name__)
