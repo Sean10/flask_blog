@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request, send_file, make_response, current_app,abort
 # from flask_restful import reqparse, abort, Api, Resource
 # from flasky.utils import allow_cross_domain
-from flask_cors import CORS
 from marshmallow import Schema, fields, pprint
 # from flask_uploads import images
 from . import files, auth, db
@@ -12,7 +11,7 @@ import os
 
 
 todo = Blueprint('todo', __name__)
-CORS(todo)
+# CORS(todo)
 
 
 class marTodo(object):
@@ -82,7 +81,6 @@ def putTodo(todo_id):
 def deleteTodo(todo_id):
     # TODOS = TodoList.query.filter_by(id=todo_id)
     print(request.data)
-    id = int(todo_id)
     TODOS = abort_if_todo_doesnt_exist(todo_id)
     if TODOS == False:
         return jsonify({"error":"no such id"})
@@ -91,12 +89,13 @@ def deleteTodo(todo_id):
     db.session.commit()
     TODOS = TodoList.query.all()
     result = schema.dump(TODOS, many=True)
-    return jsonify(result), 201
+    return jsonify(result.data), 201
 
 @todo.route('/api/todos/<todo_id>', methods=['POST'])
 def postTodo(todo_id):
-    print(request.json)
-    data = request.json['task']
+    print(request.headers)
+    print(request.form)
+    data = request.form['task']
     db.session.add(TodoList(task=data,user='admin'))
     db.session.commit()
     TODO = TodoList.query.order_by(TodoList.id.desc()).first()

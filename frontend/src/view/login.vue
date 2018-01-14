@@ -2,7 +2,7 @@
 <div class="login">
 	<section class="login-wrapper">
 		<div class="login-content">
-			<el-input placeholder="请输入用户名" class="phone-number" v-model="phoneNum"></el-input>
+			<el-input placeholder="请输入用户名" class="phone-number" v-model="username"></el-input>
 			<el-input placeholder="请输入密码" type="password" class="password-number" v-model="password" @keyup.enter.native="login"></el-input>
 			<a class="submit" href="javascript:;" @click="login">登录</a>
 		</div>
@@ -15,7 +15,14 @@ export default {
 	methods: {
 		// 模拟登录
 		login() {
-			if (this.phoneNum && this.password) {
+		  var qs = require('qs');
+			if (this.username && this.password) {
+			  this.$axios.post("/login",qs.stringify({'username':this.username,'password':this.password})).then(
+			    response => {
+			      console.log(response.data)
+
+          }
+        )
 				this.$store
 					.dispatch("login", "tokenvalue" + Math.random(1000))
 					.then(() => {

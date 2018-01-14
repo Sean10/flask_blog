@@ -65,12 +65,13 @@
             // console.log(parm);
             var qs = require('qs');
             console.log(qs.stringify({'task':trimmedText}));
-            this.$axios.post("http://localhost:5000/todo/"+nextTodoId, qs.stringify({'task':trimmedText})).then(response => {
+            this.$axios.post("/todo/api/todos/"+nextTodoId, qs.stringify({'task':trimmedText})).then(response => {
+              console.log(response.data)
               console.log(response.data['id']);
               if(response.data) {
                 this.todos.push({
                   id: response.data['id'],
-                  text: response.data['task']
+                  task: response.data['task']
                 });
               }
               // this.todos.push({id: nextTodoId, task: response.data});
@@ -79,22 +80,17 @@
         }
       },
       removeTodo(idToRemove) {
-        this.$axios.delete("http://localhost:5000/todo/"+idToRemove, {
-          params: {id: idToRemove}
-      }).then(
+        this.$axios.delete("/todo/api/todos/"+idToRemove).then(
           response => {
+            console.log(response);
             console.log(response.data);
             this.todos = response.data;
-            this.todos = this.todos.filter(todo => {
-              return todo.id !== idToRemove
-            })
           }
         )
-
       },
       create() {
         console.log("succeed");
-        this.$axios.get("http://localhost:5000/todo/").then(response => {
+        this.$axios.get("/todo/api/todos").then(response => {
           console.log(response.data);
           this.todos = response.data
         })

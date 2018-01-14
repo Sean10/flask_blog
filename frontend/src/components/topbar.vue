@@ -19,7 +19,7 @@
 			<el-menu-item index="/login">退出</el-menu-item>
 		  </el-submenu>
       <el-menu-item index="4">
-        <router-link to="/uploads">Uploads</router-link>
+        <router-link to="/login">login</router-link>
       </el-menu-item>
       <el-menu-item index="5">
         <router-link to="/about">About</router-link>

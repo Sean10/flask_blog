@@ -12,6 +12,9 @@ from flasky.client import client
 from flasky import db
 from flasky.models import TodoList,User
 from flasky.login import author
+from flask_cors import CORS
+
+CORS(app)
 # app.register_blueprint(flasky)
 app.register_blueprint(todo, url_prefix='/todo')
 app.register_blueprint(author,url_prefix='/author')

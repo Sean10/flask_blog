@@ -53,7 +53,13 @@ def get_pw(username):
 
 @author.route('/', methods=['POST'])
 def login():
-    pass
+    print(request.headers)
+    username = request.json['username']
+    password = request.json['password']
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.verify_password(password):
+        return jsonify({"error":"failed to login"}), 204
+    return jsonify({"username":user.username}), 200
 
     # error = None
     #

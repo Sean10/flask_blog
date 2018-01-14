@@ -6,11 +6,11 @@ import Login from '../view/Login'
 import UploadView from '../view/upload_view'
 import About from '../view/about'
 
-Vue.use(Router)
+Vue.use(Router);
 
 
 export default new Router({
-	mode: 'history',
+	// mode: 'history',
   routes: [
     {
       path: '/',
@@ -20,7 +20,10 @@ export default new Router({
   {
       path: '/todo',
       name: 'todo',
-      component: TodoList
+      component: TodoList,
+      meta: {
+        requireAuth: false,
+      }
   },
   {
 	  path: '/login',
