@@ -4,7 +4,8 @@ from flask import Blueprint, jsonify, request, send_file, make_response, current
 from flask_cors import CORS
 from marshmallow import Schema, fields, pprint
 # from flask_uploads import images
-from . import files, auth
+from . import files, auth, db
+from .models import TodoList
 import os
 
 # from flasky.models import User, Role, db
@@ -12,79 +13,103 @@ import os
 
 todo = Blueprint('todo', __name__)
 CORS(todo)
-# api = Api(todo)
-# parser = reqparse.RequestParser()
-# parser.add_argument('task', type=str)
 
-TODOS = [
-    {'id': 1,
-     'task': u'build an API'
-     },
-    {'id': 2,
-     'task': u'?????'
-     },
-    {
-        'id': 3,
-        'task': u'profit!'
-    }
-]
+
+class marTodo(object):
+    def __init__(self, id, task, user):
+        self.id = id
+        self.task = task
+        self.user = user
+
+class marTodoSchema(Schema):
+    id = fields.Int()
+    task = fields.Str()
+    user = fields.Str()
+
+schema = marTodoSchema()
+
+
+
+
+# TODOS = [
+#     {'id': 1,
+#      'task': u'build an API'
+#      },
+#     {'id': 2,
+#      'task': u'?????'
+#      },
+#     {
+#         'id': 3,
+#         'task': u'profit!'
+#     }
+# ]
+
+
 
 
 def abort_if_todo_doesnt_exist(todo_id):
-    temp_id = int(todo_id)
+    todo_id = int(todo_id)
 
-    print(type(temp_id))
-    for task in TODOS:
-        # print(type(task['id']), type(todo_id))
-        if task['id'] == temp_id:
-            print("succeed")
-            return True
+    TODOS = TodoList.query.filter_by(id=todo_id).first()
+    if TODOS != '':
+        return TODOS
     abort(404, message="Todo {} doesn't exist".format(todo_id))
     return False
 
 @todo.route('/api/todos/<todo_id>', methods=['Get'])
 def getTodo(todo_id):
     print(request);
-    abort_if_todo_doesnt_exist(todo_id)
-    for task in TODOS:
-        if task['id'] == int(todo_id):
-            return jsonify(task), 200
+    TODOS = abort_if_todo_doesnt_exist(todo_id)
+    if TODOS != False:
+        result = schema.dump(TODOS)
+        return jsonify(result.data), 200
 
 @todo.route('/api/todos/<todo_id>', methods=['PUT'])
 def putTodo(todo_id):
     task_temp = request.json['task']
     todo_id = int(todo_id)
-    abort_if_todo_doesnt_exist(todo_id)
-    for task in TODOS:
-        if todo_id == task['id']:
-            task['task'] = task_temp
-            return jsonify(task), 202
+    TODOS = abort_if_todo_doesnt_exist(todo_id)
+    TODOS.task = task_temp
+    db.session.commit()
+    print(TODOS)
+
+    TODOS = TodoList.query.filter_by(id=todo_id).first()
+    result = schema.dump(TODOS)
+    pprint(result.data)
+    return jsonify(result), 202
 
 @todo.route('/api/todos/<todo_id>', methods=['DELETE'])
 def deleteTodo(todo_id):
+    # TODOS = TodoList.query.filter_by(id=todo_id)
     print(request.data)
     id = int(todo_id)
-    abort_if_todo_doesnt_exist(todo_id)
-    for task in TODOS:
-        if id == task['id']:
-            TODOS.remove(task)
-            return jsonify(TODOS), 204
+    TODOS = abort_if_todo_doesnt_exist(todo_id)
+    if TODOS == False:
+        return jsonify({"error":"no such id"})
+
+    db.session.delete(TODOS)
+    db.session.commit()
+    TODOS = TodoList.query.all()
+    result = schema.dump(TODOS, many=True)
+    return jsonify(result), 201
 
 @todo.route('/api/todos/<todo_id>', methods=['POST'])
 def postTodo(todo_id):
     print(request.json)
-    args = request.json['task']
-    todo = {
-        'id': TODOS[-1]['id'] + 1,
-        'task': args
-    }
-    TODOS.append(todo)
-    print(TODOS[-1])
-    return jsonify(TODOS[-1]), 201
+    data = request.json['task']
+    db.session.add(TodoList(task=data,user='admin'))
+    db.session.commit()
+    TODO = TodoList.query.order_by(TodoList.id.desc()).first()
+    result = schema.dump(TODO)
+    return jsonify(result.data), 201
 
 @todo.route('/api/todos', methods=['GET'])
 def getTodoList():
-    return jsonify(TODOS), 200
+    TODOS = TodoList.query.all()
+    # print(type(TODOS))
+    result = schema.dump(TODOS, many=True)
+    # print(result.data)
+    return jsonify(result.data), 200
 
 @todo.errorhandler(404)
 def handle_api_not_found(error):

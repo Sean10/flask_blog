@@ -7,23 +7,23 @@
 # @Software: PyCharm
 
 from . import db
-
-class Role(db.Model):
-    __tablename__ = "roles"
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    name = db.Column(db.String(80), unique=True)
-
-
-    def __repr__(self):
-        return '<Role %r>' % self.name
-
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
-    role_id = db.Column(db.Integer, nullable=False, server_default='0')
-    def __repr__(self):
-        return '<User %r,Role id %r>' %(self.username,self.role_id)
+#
+# class Role(db.Model):
+#     __tablename__ = "roles"
+#     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+#     name = db.Column(db.String(80), unique=True)
+#
+#
+#     def __repr__(self):
+#         return '<Role %r>' % self.name
+#
+# class User(db.Model):
+#     __tablename__ = 'users'
+#     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+#     username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
+#     role_id = db.Column(db.Integer, nullable=False, server_default='0')
+#     def __repr__(self):
+#         return '<User %r,Role id %r>' %(self.username,self.role_id)
 
 class UserPW(db.Model):
     __tablename__ = "usernamepassword"
@@ -33,4 +33,13 @@ class UserPW(db.Model):
 
     def __repr__(self):
         return '<Username %r, Password %r>' % (self.username, self.password)
+
+class TodoList(db.Model):
+    __tablename__ = "todolist"
+    id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
+    task = db.Column(db.String(255), nullable=False, server_default='')
+    user = db.Column(db.String(32), nullable=False, server_default='')
+
+    def __repr__(self):
+        return 'id: %r, task: %r user: %r' % (self.id, self.task, self.user)
 
