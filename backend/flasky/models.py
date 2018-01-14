@@ -25,7 +25,7 @@ from . import db
 #     def __repr__(self):
 #         return '<User %r,Role id %r>' %(self.username,self.role_id)
 
-class UserPW(db.Model):
+class User(db.Model):
     __tablename__ = "usernamepassword"
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
@@ -33,6 +33,14 @@ class UserPW(db.Model):
 
     def __repr__(self):
         return '<Username %r, Password %r>' % (self.username, self.password)
+
+    def hash_password(self, password):
+        # self.password_hash = pwd_context.encrypt(password)
+        self.password = password
+
+    def verify_password(self, password):
+        # return pwd_context.verify(password, self.password_hash)
+        return password == self.password
 
 class TodoList(db.Model):
     __tablename__ = "todolist"

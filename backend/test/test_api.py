@@ -9,7 +9,19 @@
 import requests
 import json
 
-# headers = {'Content-Type': 'application/json'}
+headers = {'Content-Type': 'application/json'}
+
+# test login api
+# headers['Authorization'] = "admin:admin"
+
+# sign = {"username":"sean10", "password":"default"}
+# auth1 = requests.post("http://127.0.0.1:5000/author/api/signup", headers=headers,data=json.dumps(sign))
+# print(auth1)
+
+# auth2 = requests.post("http://127.0.0.1:5000/author/api/resource")
+
+
+# test todo api
 # p1 = requests.get("http://127.0.0.1:5000/todo/api/todos")
 # print(p1.text)
 #

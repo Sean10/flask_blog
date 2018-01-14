@@ -68,16 +68,16 @@ def gen_auth_code(uri):
     auth_code[code] = uri
     return code
 
-def allow_cross_domain(fun):
-    @wraps(fun)
-    def wrapper_fun(*args, **kwargs):
-        print("hee")
-        print(fun)
-        rst = make_response(fun(*args, **kwargs))
-        rst.headers['Access-Control-Allow-Origin'] = '*'
-        rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
-        allow_headers = "Referer,Accept,Origin,User-Agent"
-        rst.headers['Access-Control-Allow-Headers'] = allow_headers
-        print("hee2")
-        return rst
-    return wrapper_fun
+# def allow_cross_domain(fun):
+#     @wraps(fun)
+#     def wrapper_fun(*args, **kwargs):
+#         print("hee")
+#         print(fun)
+#         rst = make_response(fun(*args, **kwargs))
+#         rst.headers['Access-Control-Allow-Origin'] = '*'
+#         rst.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+#         allow_headers = "Referer,Accept,Origin,User-Agent"
+#         rst.headers['Access-Control-Allow-Headers'] = allow_headers
+#         print("hee2")
+#         return rst
+#     return wrapper_fun
