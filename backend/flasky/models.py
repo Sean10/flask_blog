@@ -26,10 +26,11 @@ class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
-    password = db.Column(db.String(32), nullable=False, server_default='0')
+    # password = db.Column(db.String(32), nullable=False, server_default='0')
+    password_hash = db.Column(db.String(255), nullable=False, server_default='0')
 
     def __repr__(self):
-        return '<Username %r, Password %r>' % (self.username, self.password)
+        return '<Username %r, Password %r>' % (self.username, self.password_hash)
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)

@@ -26,8 +26,8 @@ todo1 = TodoList(id=1, task=u"build an API", user='admin')
 todo2 = TodoList(id=2, task=u'?????', user='admin')
 todo3 = TodoList(id=3, task=u'profit!', user='guest')
 
-# db.session.add(User(id=1, username=u"admin", password=u"admin"))
-# db.session.add(User(id=2, username=u"guest", password=u"guest"))
+# db.session.add(User(id=1, username=u"admin", passwordhash=u"admin"))
+# db.session.add(User(id=2, username=u"guest", passwordhash=u"guest"))
 #
 #
 # db.session.add(todo1)

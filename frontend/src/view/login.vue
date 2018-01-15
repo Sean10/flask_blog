@@ -2,8 +2,8 @@
 <div class="login">
 	<section class="login-wrapper">
 		<div class="login-content">
-			<el-input placeholder="请输入用户名" class="phone-number" v-model="username"></el-input>
-			<el-input placeholder="请输入密码" type="password" class="password-number" v-model="password" @keyup.enter.native="login"></el-input>
+			<el-input placeholder="请输入用户名" name="username" class="username" v-model="username">{{ username }}</el-input>
+			<el-input placeholder="请输入密码" name="password" type="password" class="password" v-model="password" @keyup.enter.native="login">{{ password }}</el-input>
 			<a class="submit" href="javascript:;" @click="login">登录</a>
 		</div>
 	</section>
@@ -12,22 +12,33 @@
 
 <script>
 export default {
+  data: function () {
+    return {
+      username: "", password: ""
+    }
+  },
 	methods: {
 		// 模拟登录
 		login() {
 		  var qs = require('qs');
 			if (this.username && this.password) {
-			  this.$axios.post("/login",qs.stringify({'username':this.username,'password':this.password})).then(
+			  this.$axios.post("/author/",qs.stringify({'username':this.username,'password':this.password})).then(
 			    response => {
 			      console.log(response.data)
-
+            if (response.data)
+            {
+              this.$router.push("/todo");
+              console.log("succeed")
+              // this.username = ""
+              // this.password = ""
+            }
           }
         )
-				this.$store
-					.dispatch("login", "tokenvalue" + Math.random(1000))
-					.then(() => {
-						this.$router.push("/home");
-					});
+				// this.$store
+				// 	.dispatch("login", "tokenvalue" + Math.random(1000))
+				// 	.then(() => {
+				// 		this.$router.push("/home");
+				// 	});
 			} else {
 				this.$message({
 					message: "请输入用户名和密码,默认都为admin",

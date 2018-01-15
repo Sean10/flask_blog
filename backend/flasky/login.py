@@ -20,8 +20,8 @@ author = Blueprint('author',__name__)
 def sign_up():
     print(request.headers)
     print(request.get_json())
-    username = request.json['username']
-    password = request.json['password']
+    username = request.form['username']
+    password = request.form['password']
     if username is None or password is None:
         abort(400) # missing arguments
     if User.query.filter_by(username = username).first() is not None:
@@ -54,9 +54,12 @@ def get_pw(username):
 @author.route('/', methods=['POST'])
 def login():
     print(request.headers)
-    username = request.json['username']
-    password = request.json['password']
+    print(request.form)
+    username = request.form['username']
+    password = request.form['password']
+    # print(username,password)
     user = User.query.filter_by(username=username).first()
+    print(user)
     if not user or not user.verify_password(password):
         return jsonify({"error":"failed to login"}), 204
     return jsonify({"username":user.username}), 200
