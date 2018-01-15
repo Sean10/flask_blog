@@ -20,12 +20,19 @@ headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 # auth1 = requests.post("http://127.0.0.1:5000/author/api/signup", headers=headers,data=sign)
 # print(auth1)
 
+
+# test resource right check
 # auth2 = requests.post("http://127.0.0.1:5000/author/api/resource")
 
-sign = {"username":"sean10", "password":"default"}
-login = requests.post("http://127.0.0.1:5000/author/",data=sign)
-print(login)
+# test login
+# sign = {"username":"sean10", "password":"default"}
+# login = requests.post("http://127.0.0.1:5000/author/",data=sign)
+# print(login.text)
 
+# test login with token
+sign = {"token":"eyJ1c2VybmFtZSI6ICJzZWFuMTAiLCAic2FsdCI6ICIwLjgzMjM3MjU1MTA1NDUwMTciLCAiZXhwaXJlcyI6IDE1MTYwMDcxMTMuMTIyOTkzfehiOt53_QzWW_jJwhh1rZs="}
+login = requests.post("http://127.0.0.1:5000/author/", data=sign)
+print(login.text)
 
 
 # test todo api

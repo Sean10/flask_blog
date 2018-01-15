@@ -10,6 +10,12 @@ from . import db
 from passlib.apps import custom_app_context as pwd_context
 from marshmallow import Schema, fields, pprint
 
+import random
+import json
+import base64
+import hmac
+import time
+
 class marUser(object):
     def __init__(self, id, task, user):
         self.id = id
@@ -26,8 +32,8 @@ class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
-    # password = db.Column(db.String(32), nullable=False, server_default='0')
     password_hash = db.Column(db.String(255), nullable=False, server_default='0')
+    token = db.Column(db.String(255), nullable=False, server_default="")
 
     def __repr__(self):
         return '<Username %r, Password %r>' % (self.username, self.password_hash)
@@ -40,8 +46,57 @@ class User(db.Model):
         return pwd_context.verify(password, self.password_hash)
         # return password == self.password
 
-    # def generate_auth_token(self, expiration=600):
-    #     s = marUserSchema()
+    @staticmethod
+    def encode_token_bytes(data):
+        return base64.urlsafe_b64encode(data)
+
+    @staticmethod
+    def decode_token_bytes(data):
+        return base64.urlsafe_b64decode(data)
+
+    def generate_auth_token(self, expiration=600):
+        '''
+        :param uid: dict type
+        :return: base64 str
+        '''
+        data = dict()
+        data['username'] = self.username
+        if "salt" not in data:
+            data["salt"] = str(random.random())
+        if "expires" not in data:
+            data["expires"] = time.time() + expiration
+        payload = json.dumps(data).encode("utf-8")
+        # 生成签名
+        sig = self._get_signature(payload)
+        self.token = self.encode_token_bytes(payload + sig)
+        return self.token
+        # token = base64.b64encode((":".join([str(uid), str(random.random()), str(time.time() + 7200)])).encode('utf-8'));
+        # users[uid].append(token)
+        # return token
+
+    @staticmethod
+    def verify_auth_token(token):
+        decoded_token = User.decode_token_bytes(token)
+        payload = decoded_token[:-16]
+        sig = decoded_token[-16:]
+        # 生成签名
+        expected_sig = User._get_signature(payload)
+        if sig != expected_sig:
+            return {}
+        data = json.loads(payload.decode("utf-8"))
+        if data.get('expires') >= time.time():
+            user = User.query.filter_by(username=data.get('username'))
+            return user
+        return None
+
+    @staticmethod
+    def _get_signature(value):
+        """
+        :param value:
+        :return:
+        """
+        return hmac.new(b'secret123456', value).digest()
+
 
 
 class TodoList(db.Model):

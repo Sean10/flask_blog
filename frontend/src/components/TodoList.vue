@@ -31,8 +31,8 @@
       BaseInputText, TodoListItem
     },
     // props: {
-    //   type: object,
-    //   required: true
+    //   // type: object,
+    //   // required: true
     // },
     data() {
       var info = {

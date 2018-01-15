@@ -27,6 +27,7 @@ export default {
 			      console.log(response.data)
             if (response.data)
             {
+
               this.$router.push("/todo");
               console.log("succeed")
               // this.username = ""

@@ -13,10 +13,18 @@
 	  	</el-submenu>
 	  	<el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
 		<el-submenu index="-1" id="login" class="el-footer">
-			<template slot="title" id="username">{{ username }}</template>
-			<el-menu-item index="grzx-bky"><a href='http://sean10.github.io' target="_blank">博客地址</a></el-menu-item>
-			<el-menu-item index="grzx-xmdz"><a href='https://github.com/sean10' target="_blank">项目地址</a></el-menu-item>
+      <div class="login" v-show="islogin">
+			<template slot="title">{{ username }}</template>
+			<!--<el-menu-item index="grzx-bky"><a href='http://sean10.github.io' target="_blank">博客地址</a></el-menu-item>-->
+			<!--<el-menu-item index="grzx-xmdz"><a href='https://github.com/sean10' target="_blank">项目地址</a></el-menu-item>-->
 			<el-menu-item index="/login">退出</el-menu-item>
+      </div>
+
+      <div class="outoflogin" v-show="isntlogin">
+
+      <template slot="title" index="/login">注册</template>
+      </div>
+
 		  </el-submenu>
       <el-menu-item index="4">
         <router-link to="/login">login</router-link>

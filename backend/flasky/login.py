@@ -7,7 +7,6 @@
 # @Software: PyCharm
 
 from . import auth, users, auth_code, oauth_redirect_uri, db
-from .utils import  gen_token, verify_token, gen_auth_code
 from .models import User
 
 from datetime import datetime, timedelta
@@ -38,8 +37,12 @@ def get_resource():
     return jsonify({ 'data': 'Hello, %r'  % g.user.username } )
 
 @auth.verify_password
-def verify_password(username, password):
-    user = User.query.filter_by(username = username).first()
+def verify_password(username_or_token, password):
+    if password == None:
+        user = User.verify_auth_token(username_or_token)
+        return True
+
+    user = User.query.filter_by(username = username_or_token).first()
     if not user or not user.verify_password(password):
         return False
     g.user = user
@@ -53,16 +56,28 @@ def get_pw(username):
 
 @author.route('/', methods=['POST'])
 def login():
-    print(request.headers)
+    # print(request.headers)
     print(request.form)
-    username = request.form['username']
-    password = request.form['password']
+    print(request.cookies)
+    username = request.form.get('username')
+    password = request.form.get('password')
+    token = request.form.get('token')
+    print(token)
+    if token != None:
+        user = User.verify_auth_token(token)
+        return "succeed",200
     # print(username,password)
     user = User.query.filter_by(username=username).first()
     print(user)
     if not user or not user.verify_password(password):
         return jsonify({"error":"failed to login"}), 204
-    return jsonify({"username":user.username}), 200
+    #return jsonify({"username":user.username}), 200
+    # uid = dict()
+    # uid['username'] = user.username
+    res = make_response("succeed")
+    res.set_cookie('token', user.generate_auth_token(), httponly=True)
+    return res,200
+
 
     # error = None
     #

@@ -5,31 +5,32 @@ import TodoList from '@/components/TodoList'
 import Login from '../view/Login'
 import UploadView from '../view/upload_view'
 import About from '../view/about'
+import UserInfo from '../view/userInfo'
 
 Vue.use(Router);
 
 
 export default new Router({
-	// mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
-  },
-  {
+    },
+    {
       path: '/todo',
       name: 'todo',
       component: TodoList,
       meta: {
         requireAuth: false,
       }
-  },
-  {
-	  path: '/login',
-	  name: 'login',
-	  component: Login
-  },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
     {
       path: '/uploads',
       name: 'uploads',
@@ -39,6 +40,11 @@ export default new Router({
       path: '/about',
       name: 'about',
       component: About
+    },
+    {
+      path: '/userInfo',
+      name: 'UserInfo',
+      component: UserInfo
     }
   ]
 })

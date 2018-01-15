@@ -102,6 +102,7 @@ def postTodo(todo_id):
     result = schema.dump(TODO)
     return jsonify(result.data), 201
 
+@auth.login_required
 @todo.route('/api/todos', methods=['GET'])
 def getTodoList():
     TODOS = TodoList.query.all()
