@@ -27,7 +27,11 @@ export default {
 			      console.log(response.data)
             if (response.data)
             {
-
+              // console.log(this.username)
+              // console.log(this.$library.state.uid )
+              this.$library.state.uid = this.username
+              this.$library.state.islogin = true;
+              this.$emit("succeedLogin")
               this.$router.push("/todo");
               console.log("succeed")
               // this.username = ""
