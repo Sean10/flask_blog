@@ -96,7 +96,8 @@ def postTodo(todo_id):
     print(request.headers)
     print(request.form)
     data = request.form['task']
-    db.session.add(TodoList(task=data,user='admin'))
+    re_user = request.form['user']
+    db.session.add(TodoList(task=data,user=re_user))
     db.session.commit()
     TODO = TodoList.query.order_by(TodoList.id.desc()).first()
     result = schema.dump(TODO)

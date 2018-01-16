@@ -41,15 +41,18 @@
         todos: [
           {
             id: nextTodoId++,
-            task: 'Learn Vue'
+            task: 'Learn Vue',
+            user: this.$library.state.uid
           },
           {
             id: nextTodoId++,
-            task: 'Learn about single-file components'
+            task: 'Learn about single-file components',
+            user: this.$library.state.uid
           },
           {
             id: nextTodoId++,
-            task: 'Fall in love'
+            task: 'Fall in love',
+            user: this.$library.state.uid
           }
         ]
       }
@@ -64,14 +67,15 @@
             // parm.append('task',trimmedText);
             // console.log(parm);
             var qs = require('qs');
-            console.log(qs.stringify({'task':trimmedText}));
-            this.$axios.post("/todo/api/todos/"+nextTodoId, qs.stringify({'task':trimmedText})).then(response => {
+            console.log(qs.stringify({'task':trimmedText, 'user':this.$library.state.uid}));
+            this.$axios.post("/todo/api/todos/"+nextTodoId, qs.stringify({'task':trimmedText,'user':this.$library.state.uid})).then(response => {
               console.log(response.data)
               console.log(response.data['id']);
               if(response.data) {
                 this.todos.push({
                   id: response.data['id'],
-                  task: response.data['task']
+                  task: response.data['task'],
+                  user: response.data['user']
                 });
               }
               // this.todos.push({id: nextTodoId, task: response.data});

@@ -44,8 +44,9 @@
         console.log(key, keyPath);
       },
       logout() {
-        this.$delCookie("token")
+        this.delCookie("token")
         this.$library.state.islogin = false
+        this.$emit("Logout")
         this.$router.push("/login")
         console.log("logout")
       }

@@ -3,7 +3,7 @@
 
     <el-container>
       <el-header>
-        <topbar :login="islogin"></topbar>
+        <topbar :login="islogin" @Logout="changelogin"></topbar>
       </el-header>
       <el-main>
         <transition name="fade">
@@ -47,7 +47,7 @@
     ,
     methods: {
       changelogin() {
-        this.islogin = true
+        this.islogin = !this.islogin
       },
       checkLogin() {
         console.log(this.$library.state)

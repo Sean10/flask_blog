@@ -20,8 +20,8 @@ Vue.prototype.$library = {
   debug: true,
   state: {
     islogin: false,
-    uid: "sean",
-    token: ""
+    uid: null,
+    token: null
   }
 }
 
