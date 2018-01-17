@@ -76,6 +76,7 @@ def login():
     # uid['username'] = user.username
     res = make_response("succeed")
     res.set_cookie('token', user.generate_auth_token(), httponly=True)
+    res.set_cookie('uid', user.username)
     return res,200
 
 

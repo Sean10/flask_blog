@@ -6,6 +6,7 @@ import Login from '../view/Login'
 import UploadView from '../view/upload_view'
 import About from '../view/about'
 import UserInfo from '../view/userInfo'
+import SignUp from '../view/signup'
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUp
     },
     {
       path: '/uploads',

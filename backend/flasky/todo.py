@@ -96,7 +96,7 @@ def postTodo(todo_id):
     print(request.headers)
     print(request.form)
     data = request.form['task']
-    re_user = request.form['user']
+    re_user = request.cookies.get('uid')
     db.session.add(TodoList(task=data,user=re_user))
     db.session.commit()
     TODO = TodoList.query.order_by(TodoList.id.desc()).first()
@@ -106,7 +106,8 @@ def postTodo(todo_id):
 @auth.login_required
 @todo.route('/api/todos', methods=['GET'])
 def getTodoList():
-    TODOS = TodoList.query.all()
+    re_uid = request.cookies.get('uid')
+    TODOS = TodoList.query.filter_by(user=re_uid)
     # print(type(TODOS))
     result = schema.dump(TODOS, many=True)
     # print(result.data)

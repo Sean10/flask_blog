@@ -10,6 +10,9 @@
       </el-menu-item>
 
       <template v-if="!login" v-model="login">
+      <el-menu-item index="-2" id="signup" class="el-footer">
+        <router-link to="/signup">注册</router-link>
+      </el-menu-item>
       <el-menu-item index="-1" id="login" class="el-footer" >
         <router-link to="/login">登录</router-link>
       </el-menu-item>
@@ -75,5 +78,9 @@
   #login2 {
     position: fixed;
     right: 50px;
+  }
+  #signup {
+    position: fixed;
+    right: 100px;
   }
 </style>

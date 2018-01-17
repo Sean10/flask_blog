@@ -68,7 +68,7 @@
             // console.log(parm);
             var qs = require('qs');
             console.log(qs.stringify({'task':trimmedText, 'user':this.$library.state.uid}));
-            this.$axios.post("/todo/api/todos/"+nextTodoId, qs.stringify({'task':trimmedText,'user':this.$library.state.uid})).then(response => {
+            this.$axios.post("/todo/api/todos/"+nextTodoId, qs.stringify({'task':trimmedText})).then(response => {
               console.log(response.data)
               console.log(response.data['id']);
               if(response.data) {
