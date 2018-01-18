@@ -117,7 +117,7 @@ def postTodo(todo_id):
     """
     print(request.headers)
     print(request.json)
-    data = request.json['task']
+    data = request.form['task']
     re_user = request.cookies.get('uid')
     db.session.add(TodoList(task=data,user=re_user))
     db.session.commit()
