@@ -83,7 +83,7 @@ def deleteTodo(todo_id):
     print(request.data)
     TODOS = abort_if_todo_doesnt_exist(todo_id)
     if TODOS == False:
-        return jsonify({"error":"no such id"})
+        return jsonify({"error":"no such id"}),404
 
     db.session.delete(TODOS)
     db.session.commit()
@@ -94,8 +94,8 @@ def deleteTodo(todo_id):
 @todo.route('/api/todos/<todo_id>', methods=['POST'])
 def postTodo(todo_id):
     print(request.headers)
-    print(request.form)
-    data = request.form['task']
+    print(request.json)
+    data = request.json['task']
     re_user = request.cookies.get('uid')
     db.session.add(TodoList(task=data,user=re_user))
     db.session.commit()
