@@ -1,3 +1,5 @@
+
+
 from flask import Blueprint, jsonify, request, send_file, make_response, current_app,abort
 # from flask_restful import reqparse, abort, Api, Resource
 # from flasky.utils import allow_cross_domain
@@ -57,6 +59,11 @@ def abort_if_todo_doesnt_exist(todo_id):
 
 @todo.route('/api/todos/<todo_id>', methods=['Get'])
 def getTodo(todo_id):
+    """
+    获取指定Todo
+    :param todo_id:
+    :return:
+    """
     print(request);
     TODOS = abort_if_todo_doesnt_exist(todo_id)
     if TODOS != False:
@@ -65,6 +72,11 @@ def getTodo(todo_id):
 
 @todo.route('/api/todos/<todo_id>', methods=['PUT'])
 def putTodo(todo_id):
+    """
+    更新指定Todo
+    :param todo_id:
+    :return:
+    """
     task_temp = request.json['task']
     todo_id = int(todo_id)
     TODOS = abort_if_todo_doesnt_exist(todo_id)
@@ -79,6 +91,11 @@ def putTodo(todo_id):
 
 @todo.route('/api/todos/<todo_id>', methods=['DELETE'])
 def deleteTodo(todo_id):
+    """
+    删除指定Todo
+    :param todo_id:
+    :return:
+    """
     # TODOS = TodoList.query.filter_by(id=todo_id)
     print(request.data)
     TODOS = abort_if_todo_doesnt_exist(todo_id)
@@ -93,6 +110,11 @@ def deleteTodo(todo_id):
 
 @todo.route('/api/todos/<todo_id>', methods=['POST'])
 def postTodo(todo_id):
+    """
+    添加新的Todo
+    :param todo_id:
+    :return:
+    """
     print(request.headers)
     print(request.json)
     data = request.json['task']
@@ -106,6 +128,10 @@ def postTodo(todo_id):
 @auth.login_required
 @todo.route('/api/todos', methods=['GET'])
 def getTodoList():
+    """
+    获取完整Todolist
+    :return:
+    """
     re_uid = request.cookies.get('uid')
     TODOS = TodoList.query.filter_by(user=re_uid)
     # print(type(TODOS))

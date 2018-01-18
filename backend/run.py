@@ -1,3 +1,7 @@
+"""
+程序入口
+"""
+
 from flasky import create_app
 from config import config
 

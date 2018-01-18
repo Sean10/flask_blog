@@ -17,6 +17,10 @@ author = Blueprint('author',__name__)
 
 @author.route('/api/signup', methods = ['POST'])
 def sign_up():
+    """
+    注册
+    :return:
+    """
     print(request.headers)
     print(request.get_json())
     username = request.form['username']
@@ -34,10 +38,20 @@ def sign_up():
 @author.route('/api/resource')
 @auth.login_required
 def get_resource():
+    """
+    权限认证功能
+    :return:
+    """
     return jsonify({ 'data': 'Hello, %r'  % g.user.username } )
 
 @auth.verify_password
 def verify_password(username_or_token, password):
+    """
+    用户认证
+    :param username_or_token:
+    :param password:
+    :return:
+    """
     if password == None:
         user = User.verify_auth_token(username_or_token)
         return True
@@ -56,6 +70,10 @@ def get_pw(username):
 
 @author.route('/', methods=['POST'])
 def login():
+    """
+    登录
+    :return:
+    """
     # print(request.headers)
     print(request.form)
     print(request.cookies)

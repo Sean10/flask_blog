@@ -3,7 +3,9 @@ import pymysql
 import os
 
 class config():
-
+    """
+    配置信息初始化
+    """
     # Load default config and override config from an environment variable
     DATABASE = os.path.join(os.getcwd(), 'flaskr.db')
     DEBUG = True

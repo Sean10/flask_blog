@@ -29,6 +29,9 @@ class marUserSchema(Schema):
 
 
 class User(db.Model):
+    """
+    用户信息模型
+    """
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     username = db.Column(db.String(32), nullable=False, unique=True, server_default='', index=True)
@@ -39,23 +42,44 @@ class User(db.Model):
         return '<Username %r, Password %r>' % (self.username, self.password_hash)
 
     def hash_password(self, password):
+        """
+        对密码进行MD5 Hash
+        :param password:
+        :return:
+        """
         self.password_hash = pwd_context.encrypt(password)
         # self.password = password
 
     def verify_password(self, password):
+        """
+        密码验证
+        :param password:
+        :return:
+        """
         return pwd_context.verify(password, self.password_hash)
         # return password == self.password
 
     @staticmethod
     def encode_token_bytes(data):
+        """
+        加密为base64 token
+        :param data:
+        :return:
+        """
         return base64.urlsafe_b64encode(data)
 
     @staticmethod
     def decode_token_bytes(data):
+        """
+        解密base64 token
+        :param data:
+        :return:
+        """
         return base64.urlsafe_b64decode(data)
 
     def generate_auth_token(self, expiration=600):
         '''
+        生成认证token
         :param uid: dict type
         :return: base64 str
         '''
@@ -76,6 +100,11 @@ class User(db.Model):
 
     @staticmethod
     def verify_auth_token(token):
+        """
+        解析token
+        :param token:
+        :return:
+        """
         decoded_token = User.decode_token_bytes(token)
         payload = decoded_token[:-16]
         sig = decoded_token[-16:]
@@ -92,6 +121,7 @@ class User(db.Model):
     @staticmethod
     def _get_signature(value):
         """
+        HMAC加密
         :param value:
         :return:
         """
@@ -100,6 +130,9 @@ class User(db.Model):
 
 
 class TodoList(db.Model):
+    """
+    TodoList 模型
+    """
     __tablename__ = "todolist"
     id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     task = db.Column(db.String(255), nullable=False, server_default='')
